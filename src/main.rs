@@ -3,25 +3,27 @@ extern crate nickel;
 
 use std::env;
 
+use nickel::status::StatusCode;
+use nickel::MediaType;
 use nickel::Nickel;
 
 fn main() {
+    let default_port = "9090";
+    let port_str = env::var("PORT").unwrap_or(String::from(default_port));
+    let port: u32 = port_str.parse().unwrap();
     let mut server = Nickel::new();
 
     server.utilize(router! {
-        get "**" => |_req, _res| {
-            "Meu microservico Rust esta online!"
+        get "**" => |_, mut res| {
+            res.set(StatusCode::Ok);
+            res.set(MediaType::Json);
+
+            "{\"mensagem\": \"Meu microservico Rust esta online!\"}"
         }
     });
 
-    match env::var("PORT") {
-        Ok(port) => match server.listen(format!("127.0.0.1:{}", port)) {
-            Ok(_) => println!("Servidor iniciado na porta {}!", port),
-            Err(_) => eprintln!("Erro ao iniciar o servidor na porta {}!", port),
-        },
-        Err(e) => match server.listen("127.0.0.1:8080") {
-            Ok(_) => println!("Servidor iniciado na porta padrão 8080!"),
-            Err(_) => eprintln!("Erro ao iniciar o servidor na porta padrão 8080!"),
-        },
+    match server.listen(format!("0.0.0.0:{}", port)) {
+        Ok(_) => println!("Servidor iniciado na porta {}!", port),
+        Err(_) => eprintln!("Erro ao iniciar o servidor na porta {}!", port),
     };
 }
