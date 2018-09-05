@@ -1,7 +1,7 @@
 [package]
 name = "nickel-test"
 version = "0.1.0"
-authors = ["Erlimar Silva Campos <erlimar.campos@squadra.com.br>"]
+authors = ["Erlimar Silva Campos <erlimar@gmail.com>"]
 
 [dependencies]
 nickel = "0.10.1"
